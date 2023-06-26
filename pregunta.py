@@ -11,31 +11,28 @@ import pandas as pd
 
 def clean_data():
 
-    df = pd.read_csv("solicitudes_credito.csv", sep=";")
-    df = df.dropna()
+    df = pd.read_csv("solicitudes_credito.csv", sep=";",index_col=0)
+    
+    df.dropna(axis=0,inplace=True)
+    df.drop_duplicates(inplace=True)
 
-    # Estandarizar el formato de las columnas
-    df.sexo = df.sexo.str.lower()
-    df.tipo_de_emprendimiento = df.tipo_de_emprendimiento.str.lower()
+    # Estandarizar el formato de las columnas de texto
 
+    for col in ['sexo', 'tipo_de_emprendimiento', 'idea_negocio', 'barrio', 'línea_credito']:
+        df[col] = df[col].str.lower()
+        df[col] = df[col].apply(lambda i: i.replace('-',' '))
+        df[col] = df[col].apply(lambda i: i.replace('_',' '))
+    
     # Conversión de comuna a dato entero
-    df.comuna_ciudadano = df.comuna_ciudadano.astype(int)
-
-    # Estandarizando la columna "idea_negocio"
-    df.idea_negocio = df.idea_negocio.str.lower()
-    df.idea_negocio = df.idea_negocio.str.replace("-", " ")
-    df.idea_negocio = df.idea_negocio.str.replace("_", " ")
-    df.idea_negocio = df.idea_negocio.str.strip()
-
-    # Estandarizando la columna "barrio"
-    df.barrio = df.barrio.str.replace("-", " ")
-    df.barrio = df.barrio.str.replace("_", " ")
-
+    df.comuna_ciudadano = df.comuna_ciudadano.astype(float)
+    
+    
     # Estandarización de las fechas
     def correccion(fecha):
-        componentes = fecha.split("/")
-        if len(fecha[0]) == 4:
-            nueva_fecha = "/".join(sorted(componentes,reverse=True))
+        componentes = fecha.split('/')
+        if len(componentes[0]) == 4:
+            nueva_fecha = '/'.join(reversed(componentes))
+            print(nueva_fecha)
         else:
             nueva_fecha = fecha
         return nueva_fecha
@@ -43,19 +40,18 @@ def clean_data():
     df.fecha_de_beneficio = df.fecha_de_beneficio.apply(correccion)
     
     # Tener todos los datos del monto del crédito en el mismo formato
-    df.monto_del_credito = df.monto_del_credito.str.lstrip("$")
-    df.monto_del_credito = df.monto_del_credito.str.replace(",","")
-    df.monto_del_credito = df.monto_del_credito.str.replace(" ","")
+    df.monto_del_credito = df.monto_del_credito.str.strip('$')
+    df.monto_del_credito = df.monto_del_credito.str.replace(',','')
+    df.monto_del_credito = df.monto_del_credito.str.replace(' ','')
     df.monto_del_credito = df.monto_del_credito.astype(float)
+    df.monto_del_credito = df.monto_del_credito.astype(int)
     
-    df.línea_credito = df.línea_credito.str.lower()
-    df.línea_credito = df.línea_credito.str.replace("-",' ')
-    df.línea_credito = df.línea_credito.str.replace("_",' ')
-
-    df = df.drop_duplicates(subset=["sexo","tipo_de_emprendimiento","idea_negocio",
+    df.dropna(axis=0,inplace=True)
+    df.drop_duplicates(subset=["sexo","tipo_de_emprendimiento","idea_negocio",
                                     "barrio", "estrato", "comuna_ciudadano",
-                                    "fecha_de_beneficio", "monto_del_credito", "línea_credito"])
+                                    "fecha_de_beneficio", "monto_del_credito",
+                                    "línea_credito"],
+                                    inplace=True)
     
 
     return df
-
