@@ -15,14 +15,14 @@ def clean_data():
     df = df.dropna()
 
     # Estandarizar el formato de las columnas
-    df.sexo = df.sexo.str.capitalize()
-    df.tipo_de_emprendimiento = df.tipo_de_emprendimiento.str.capitalize()
+    df.sexo = df.sexo.str.lower()
+    df.tipo_de_emprendimiento = df.tipo_de_emprendimiento.str.lower()
 
     # Conversión de comuna a dato entero
     df.comuna_ciudadano = df.comuna_ciudadano.astype(int)
 
     # Estandarizando la columna "idea_negocio"
-    df.idea_negocio = df.idea_negocio.str.capitalize()
+    df.idea_negocio = df.idea_negocio.str.lower()
     df.idea_negocio = df.idea_negocio.str.replace("-", " ")
     df.idea_negocio = df.idea_negocio.str.replace("_", " ")
     df.idea_negocio = df.idea_negocio.str.strip()
@@ -48,15 +48,13 @@ def clean_data():
     df.monto_del_credito = df.monto_del_credito.str.replace(" ","")
     df.monto_del_credito = df.monto_del_credito.astype(float)
     
-    df.línea_credito = df.línea_credito.str.capitalize()
+    df.línea_credito = df.línea_credito.str.lower()
     df.línea_credito = df.línea_credito.str.replace("-",' ')
     df.línea_credito = df.línea_credito.str.replace("_",' ')
 
     df = df.drop_duplicates(subset=["sexo","tipo_de_emprendimiento","idea_negocio",
                                     "barrio", "estrato", "comuna_ciudadano",
                                     "fecha_de_beneficio", "monto_del_credito", "línea_credito"])
-
-    print(df)
     
 
     return df
