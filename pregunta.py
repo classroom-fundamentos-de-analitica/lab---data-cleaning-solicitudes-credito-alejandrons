@@ -32,7 +32,6 @@ def clean_data():
         componentes = fecha.split('/')
         if len(componentes[0]) == 4:
             nueva_fecha = '/'.join(reversed(componentes))
-            print(nueva_fecha)
         else:
             nueva_fecha = fecha
         return nueva_fecha
